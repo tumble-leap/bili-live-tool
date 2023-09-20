@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Akegarasu/blivedm-go/api"
-	"github.com/Akegarasu/blivedm-go/client"
-	"github.com/Akegarasu/blivedm-go/message"
+	"github.com/AceXiamo/blivedm-go/api"
+	"github.com/AceXiamo/blivedm-go/client"
+	"github.com/AceXiamo/blivedm-go/message"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 )

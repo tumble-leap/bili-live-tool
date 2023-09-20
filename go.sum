@@ -1,5 +1,5 @@
-github.com/Akegarasu/blivedm-go v1.5.0 h1:mwsYghW5gD4ndIJ95PijbVb+qUBrlEbx9HKxd7efCcA=
-github.com/Akegarasu/blivedm-go v1.5.0/go.mod h1:s7mt/NRZ8VY2ZS39mk/hS1cJDvXDagzbutikXCqRNcw=
+github.com/AceXiamo/blivedm-go v1.5.3 h1:yftK4zt+g2vwtv2owdB6kCWDsRdFbTq7vHdj9ODVgy0=
+github.com/AceXiamo/blivedm-go v1.5.3/go.mod h1:gICKdnWP6jRdhjubM87rfepNTFdh4H3Ht+JGuAnV68s=
 github.com/Baozisoftware/qrcode-terminal-go v0.0.0-20170407111555-c0650d8dff0f h1:2dk3eOnYllh+wUOuDhOoC2vUVoJF/5z478ryJ+wzEII=
 github.com/Baozisoftware/qrcode-terminal-go v0.0.0-20170407111555-c0650d8dff0f/go.mod h1:4a58ifQTEe2uwwsaqbh3i2un5/CBPg+At/qHpt18Tmk=
 github.com/andybalholm/brotli v1.0.4 h1:V7DdXeJtZscaqfNuAdSRuRFzuiKlHSC/Zh3zl9qY3JY=

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	myTool := NewBiliDmTool("config.yaml", "cookies.txt", log.InfoLevel)
+	myTool := NewBiliDmTool("config.yaml", "cookies.txt", log.DebugLevel)
 	log.SetLevel(log.InfoLevel)
 
 	if err := myTool.LoadConfig(); err != nil {

@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Akegarasu/blivedm-go/api"
+	"github.com/AceXiamo/blivedm-go/api"
 	log "github.com/sirupsen/logrus"
 )
 

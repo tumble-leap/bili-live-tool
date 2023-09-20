@@ -3,7 +3,7 @@ module bili-dm-tool
 go 1.21.1
 
 require (
-	github.com/Akegarasu/blivedm-go v1.5.0
+	github.com/AceXiamo/blivedm-go v1.5.3
 	github.com/Baozisoftware/qrcode-terminal-go v0.0.0-20170407111555-c0650d8dff0f
 	github.com/sirupsen/logrus v1.9.3
 	github.com/tidwall/gjson v1.16.0
