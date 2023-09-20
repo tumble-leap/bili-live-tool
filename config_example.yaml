@@ -1,0 +1,43 @@
+bot: "昵称"
+admin: 12345678
+
+rooms:
+  # id为直播间id
+  - id: 123
+    # 是否启用，总开关，改为false后全部功能关闭
+    enable: true
+    # 是否每隔一定时间自动发送消息
+    auto_send: true
+    # 是否自动礼物感谢
+    thank_gift: true
+    # 是否自动上船感谢
+    thank_guard: true
+    # 是否自动进入直播间欢迎
+    auto_welcome: true
+
+    # 加入直播间的欢迎语
+    welcome_message: "欢迎%s，喜欢可以点赞关注来一波～"
+
+    # 每隔一定时间自动发送的消息内容
+    auto_send_message:
+      - "欢迎来到直播间～喜欢可以点点关注"
+      - "双击屏幕点点免费的赞噢"
+    
+    # 送礼物的感谢语
+    thank_gift_message:
+      - "愿老板天天开心"
+      - "祝老板早日暴富"
+    
+    # 上舰的感谢语
+    thank_guard_message:
+      - "老板大气"
+
+  # 可添加多个直播间，格式相同
+  - id: 1234
+    # 不启用
+    enable: false
+
+# 发送指定消息的最小随机间隔
+min_dura: 180
+# 发送指定消息的最大随机间隔
+max_dura: 300
