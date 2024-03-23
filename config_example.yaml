@@ -32,6 +32,15 @@ rooms:
     thank_guard_message:
       - "老板大气"
 
+    # 进入直播间时发送一条消息。留空则不发送
+    enter_message: "hello"
+
+    # 检测多长时间内的消息
+    limit_time: 30
+    
+    # 该时间段内发送大表情条数
+    limit_num: 5
+
   # 可添加多个直播间，格式相同
   - id: 1234
     # 不启用

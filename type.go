@@ -11,15 +11,35 @@ type GenQrcodeRes struct {
 	}
 }
 
-type valiQrcodeRes struct {
-	Code    int
-	Message string
+type CookieType struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	TTL     int    `json:"ttl"`
 	Data    struct {
-		Url          string // 附带cookie信息
+		IsNew        bool   `json:"is_new"`
+		Mid          int    `json:"mid"`
+		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`
-		Timestamp    int64  // 扫码登陆时间
-		Message      string
-	}
+		ExpiresIn    int    `json:"expires_in"`
+		TokenInfo    struct {
+			Mid          int    `json:"mid"`
+			AccessToken  string `json:"access_token"`
+			RefreshToken string `json:"refresh_token"`
+			ExpiresIn    int    `json:"expires_in"`
+		} `json:"token_info"`
+		CookieInfo struct {
+			Cookies []struct {
+				Name     string `json:"name"`
+				Value    string `json:"value"`
+				HTTPOnly int    `json:"http_only"`
+				Expires  int    `json:"expires"`
+				Secure   int    `json:"secure"`
+			} `json:"cookies"`
+			Domains []string `json:"domains"`
+		} `json:"cookie_info"`
+		Sso  []string `json:"sso"`
+		Hint string   `json:"hint"`
+	} `json:"data"`
 }
 
 type BiliDmTool struct {
@@ -39,13 +59,19 @@ type BiliDmTool struct {
 		Messages          []string `yaml:"auto_send_message"`
 		ThankGiftMessage  []string `yaml:"thank_gift_message"`
 		ThankGuardMessage []string `yaml:"thank_guard_message"`
+		EnterMessage      string   `yaml:"enter_message"`
+		AutoBan           bool     `yaml:"auto_ban"`
+		BanWords          []string `yaml:"ban_words"`
+		LimitTime         int      `yaml:"limit_time"`
+		LimitNum          int      `yaml:"limit_num"`
 	}
 
-	MinDura  int `yaml:"min_dura"`
-	MaxDura  int `yaml:"max_dura"`
-	biliJct  string
-	sessData string
-	cookies  string
+	MinDura   int        `yaml:"min_dura"`
+	MaxDura   int        `yaml:"max_dura"`
+	biliJct   string     `yaml:"-"`
+	sessData  string     `yaml:"-"`
+	cookieStr string     `yaml:"-"`
+	allCookie CookieType `yaml:"-"`
 }
 
 type GetUnameByid struct {

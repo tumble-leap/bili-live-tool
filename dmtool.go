@@ -25,6 +25,9 @@ func NewBiliDmTool(configFile, cookieFile string, logLevel log.Level) *BiliDmToo
 
 func (tool *BiliDmTool) run() error {
 	log.Printf("当前管理员uid为：%d，呼叫 %s 可检测是否离线！", tool.Admin, tool.Nick)
+	// 新建管道并保存消息
+	var msg = make(chan []string, 100)
+	messageTimestamps := make(map[string][]time.Time)
 	count := 0
 	for i, room := range tool.Rooms {
 		if room.Id == 0 || !room.Enable {
@@ -34,21 +37,23 @@ func (tool *BiliDmTool) run() error {
 		room := room
 		i := i
 		go func() {
-			uname, err := getUnameByRoom(room.Id)
+			uname, err := getUnameByRoom(room.Id, tool.biliJct, tool.sessData)
 			if err != nil {
 				log.Println(err)
 				uname = "unknown"
 			}
 			log.Printf("正在连接第%d个直播间，房间id：%d，主播：%s", i+1, room.Id, uname)
 			c := client.NewClient(room.Id)
-			c.SetCookie(tool.cookies)
+			c.SetCookie(tool.cookieStr)
 
 			//弹幕事件
 			c.OnDanmaku(func(danmaku *message.Danmaku) {
 				if danmaku.Type == message.EmoticonDanmaku {
 					log.Printf("[弹幕表情] %s：表情URL： %s\n", danmaku.Sender.Uname, danmaku.Emoticon.Url)
+					msg <- []string{danmaku.Sender.Uname, fmt.Sprint(danmaku.Sender.Uid), "弹幕表情" + danmaku.Emoticon.Url}
 				} else {
 					log.Printf("[弹幕] %s：%s\n", danmaku.Sender.Uname, danmaku.Content)
+					msg <- []string{danmaku.Sender.Uname, fmt.Sprint(danmaku.Sender.Uid), danmaku.Content}
 					if danmaku.Sender.Uid == tool.Admin && strings.Contains(danmaku.Content, tool.Nick) {
 						tool.sendDanmaku(c.RoomID, "在的呢～")
 					}
@@ -101,17 +106,56 @@ func (tool *BiliDmTool) run() error {
 			}
 			log.Printf("第%d个直播间连接成功", i+1)
 
-			if room.AutoSend {
-				log.Println("自动轮发消息事件注册成功")
-				time.Sleep(time.Minute)
-				for {
-					for _, m := range room.Messages {
-						tool.sendDanmaku(room.Id, m)
-						time.Sleep(time.Second * time.Duration(rand.Intn(tool.MaxDura-tool.MinDura)+tool.MinDura))
+			// 刷屏自动禁言
+			if room.AutoBan {
+				go func() {
+					for s := range msg {
+						username := s[0]
+						userID := s[1]
+						message := s[2]
+						for _, banWord := range room.BanWords {
+							if strings.Contains(message, banWord) {
+								messageTimestamps[username] = append(messageTimestamps[username], time.Now())
+
+								// 清理过期时间戳
+								for len(messageTimestamps[username]) > 0 && time.Since(messageTimestamps[username][0]).Seconds() > float64(room.LimitTime) {
+									messageTimestamps[username] = messageTimestamps[username][1:]
+								}
+								if len(messageTimestamps[username]) >= room.LimitNum {
+									fmt.Printf("用户 %s 违规次数达到5次，将被禁言\n", username)
+									// 执行禁言操作，例如通过API调用实际直播平台的禁言接口
+									err := tool.blockUser(userID, room.Id)
+									if err != nil {
+										fmt.Println(err)
+									} else {
+										fmt.Printf("用户 %s 被禁言成功！", username)
+									}
+									messageTimestamps[username] = []time.Time{}
+								}
+							}
+						}
+
 					}
+				}()
+			}
+
+			if room.AutoSend {
+				go func() {
+					log.Println("自动轮发消息事件注册成功")
+					time.Sleep(time.Minute)
+					for {
+						for _, m := range room.Messages {
+							tool.sendDanmaku(room.Id, m)
+							time.Sleep(time.Second * time.Duration(rand.Intn(tool.MaxDura-tool.MinDura)+tool.MinDura))
+						}
+					}
+				}()
+			}
+
+			if room.EnterMessage != "" {
+				if err := tool.sendDanmaku(room.Id, room.EnterMessage); err != nil {
+					log.Println(err)
 				}
-			} else {
-				select {}
 			}
 		}()
 	}
