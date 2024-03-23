@@ -8,23 +8,29 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+func init() {
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+		ForceColors:     true,
+	})
+}
+
 func main() {
-	myTool := NewBiliDmTool("config.yaml", "cookie.json", log.DebugLevel)
+	myTool := NewBiliDmTool("config.yaml", "cookie.json", log.InfoLevel)
 
 	if err := myTool.LoadConfig(); err != nil {
 		log.Printf("无法加载配置: %v 已尝试创建新的配置文件", err)
 		myTool.CreateBlankConfigfile()
-		fmt.Print("按下回车键以退出...")
+		log.Print("按下回车键以退出...")
 		fmt.Scanln()
 		os.Exit(1)
 	}
 
 	if err := myTool.LoadCookie(); err != nil {
 		log.Printf("无法加载Cookie信息: %v 已尝试创建新的Cookie文件", err)
-		// myTool.CreateCookiefile()
 		login.LoginBili()
 	}
-	// 如果roomid为0 也退出程序
 
 	myTool.run()
 }

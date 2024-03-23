@@ -15,7 +15,7 @@ func getUname(uid int, biliJct string, sessData string) (string, error) {
 	url := fmt.Sprintf("https://api.bilibili.com/x/space/wbi/acc/info?mid=%d", uid)
 	b, err := WbiRequst(url, biliJct, sessData)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	uname := gjson.Get(string(b), "data.name").String()
 	return uname, nil

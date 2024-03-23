@@ -24,6 +24,7 @@ func NewBiliDmTool(configFile, cookieFile string, logLevel log.Level) *BiliDmToo
 }
 
 func (tool *BiliDmTool) run() error {
+	log.SetLevel(tool.LogLevel)
 	log.Printf("当前管理员uid为：%d，呼叫 %s 可检测是否离线！", tool.Admin, tool.Nick)
 	// 新建管道并保存消息
 	var msg = make(chan []string, 100)
@@ -76,7 +77,7 @@ func (tool *BiliDmTool) run() error {
 						tool.sendDanmaku(c.RoomID, strTrans("感谢%s的"+gift.GiftName+","+room.ThankGiftMessage[rand.Intn(len(room.ThankGiftMessage))], gift.Uname))
 					}
 				})
-				log.Println("礼物感谢事件注册成功")
+				log.Printf("礼物感谢事件注册成功。当前已添加感谢语条数：%d", len(room.ThankGiftMessage))
 			}
 
 			// 上舰事件
@@ -86,7 +87,7 @@ func (tool *BiliDmTool) run() error {
 					tool.sendDanmaku(c.RoomID, strTrans("感谢%s上船,"+room.ThankGuardMessage[rand.Intn(len(room.ThankGuardMessage))], guardBuy.Username))
 
 				})
-				log.Println("舰长感谢事件注册成功")
+				log.Println("舰长感谢事件注册成功。当前已添加感谢语条数:", len(room.ThankGuardMessage))
 			}
 
 			// 监听进入直播间事件
@@ -97,14 +98,13 @@ func (tool *BiliDmTool) run() error {
 					json.Unmarshal([]byte(data), &v)
 					tool.sendDanmaku(c.RoomID, strTrans(room.WelcomeMessage, v.Uname))
 				})
-				log.Println("进入直播间欢迎事件注册成功")
+				log.Println("进入直播间欢迎事件注册成功。当前欢迎语:", room.WelcomeMessage)
 			}
 
 			err = c.Start()
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Printf("第%d个直播间连接成功", i+1)
 
 			// 刷屏自动禁言
 			if room.AutoBan {
@@ -122,13 +122,13 @@ func (tool *BiliDmTool) run() error {
 									messageTimestamps[username] = messageTimestamps[username][1:]
 								}
 								if len(messageTimestamps[username]) >= room.LimitNum {
-									fmt.Printf("用户 %s 违规次数达到5次，将被禁言\n", username)
+									log.Printf("用户 %s 违规次数达到5次，将被禁言\n", username)
 									// 执行禁言操作，例如通过API调用实际直播平台的禁言接口
 									err := tool.blockUser(userID, room.Id)
 									if err != nil {
-										fmt.Println(err)
+										log.Println(err)
 									} else {
-										fmt.Printf("用户 %s 被禁言成功！", username)
+										log.Printf("用户 %s 被禁言成功！", username)
 									}
 									messageTimestamps[username] = []time.Time{}
 								}
@@ -137,11 +137,12 @@ func (tool *BiliDmTool) run() error {
 
 					}
 				}()
+				log.Printf("违规自动禁言事件注册成功。当前关键词：%v", room.BanWords)
 			}
 
 			if room.AutoSend {
 				go func() {
-					log.Println("自动轮发消息事件注册成功")
+					log.Printf("自动轮发消息事件注册成功。当前条数：%v", len(room.Messages))
 					time.Sleep(time.Minute)
 					for {
 						for _, m := range room.Messages {
@@ -157,6 +158,7 @@ func (tool *BiliDmTool) run() error {
 					log.Println(err)
 				}
 			}
+			log.Printf("第%d个直播间连接成功", i+1)
 		}()
 	}
 	if count != 0 {

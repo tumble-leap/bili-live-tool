@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -13,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 )
 
@@ -30,12 +30,12 @@ var (
 func WbiRequst(urlStr string, biliJct string, sessData string) ([]byte, error) {
 	newUrlStr, err := signAndGenerateURL(urlStr)
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		log.Printf("Error: %s", err)
 		return nil, err
 	}
 	req, err := http.NewRequest("GET", newUrlStr, nil)
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		log.Printf("Error: %s", err)
 		return nil, err
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
@@ -43,7 +43,7 @@ func WbiRequst(urlStr string, biliJct string, sessData string) ([]byte, error) {
 	req.AddCookie(&http.Cookie{Name: "bili_jct", Value: biliJct})
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Printf("Request failed: %s", err)
+		log.Printf("Request failed: %s", err)
 		return nil, err
 	}
 	defer response.Body.Close()
@@ -140,13 +140,13 @@ func getWbiKeysCached() (string, string) {
 func getWbiKeys() (string, string) {
 	resp, err := http.Get("https://api.bilibili.com/x/web-interface/nav")
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		log.Printf("Error: %s", err)
 		return "", ""
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		log.Printf("Error: %s", err)
 		return "", ""
 	}
 	json := string(body)
