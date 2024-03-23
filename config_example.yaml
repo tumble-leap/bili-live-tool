@@ -14,6 +14,8 @@ rooms:
     thank_guard: true
     # 是否自动进入直播间欢迎
     auto_welcome: true
+    # 自动禁言功能
+    auto_ban: true
 
     # 加入直播间的欢迎语
     welcome_message: "欢迎%s，喜欢可以点赞关注来一波～"
@@ -32,8 +34,14 @@ rooms:
     thank_guard_message:
       - "老板大气"
 
-    # 进入直播间时发送一条消息。留空则不发送
-    enter_message: "hello"
+    # 进入直播间时发送首条消息。留空则不发送
+    enter_message: "俺来也～"
+
+    # 禁言关键词
+    ban_words:
+      - "弹幕表情"
+      - "丑"
+      - "憨"
 
     # 检测多长时间内的消息
     limit_time: 30
