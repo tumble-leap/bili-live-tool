@@ -1,3 +1,4 @@
 config.yaml
 cookie.json
 build
+.DS_Store
