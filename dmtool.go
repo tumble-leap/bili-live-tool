@@ -140,6 +140,7 @@ func (tool *BiliDmTool) run() error {
 				log.Printf("违规自动禁言事件注册成功。当前关键词：%v", room.BanWords)
 			}
 
+			// 自动轮发消息
 			if room.AutoSend {
 				go func() {
 					log.Printf("自动轮发消息事件注册成功。当前条数：%v", len(room.Messages))
@@ -153,6 +154,7 @@ func (tool *BiliDmTool) run() error {
 				}()
 			}
 
+			// 进直播间后首条消息
 			if room.EnterMessage != "" {
 				if err := tool.sendDanmaku(room.Id, room.EnterMessage); err != nil {
 					log.Println(err)
@@ -192,6 +194,7 @@ func (tool *BiliDmTool) sendDanmaku(roomid int, msg string) error {
 	return nil
 }
 
+// 过长截断
 func strTrans(s string, name string) string {
 	if len([]rune(name)) <= 22-len([]rune(s)) {
 		return fmt.Sprintf(s, name)

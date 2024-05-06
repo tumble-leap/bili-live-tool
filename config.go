@@ -20,7 +20,7 @@ func (tool *BiliDmTool) LoadConfig() error {
 	}
 
 	yaml.Unmarshal(result, tool)
-	if err != nil || tool.Rooms[0].Id == 0 {
+	if tool.Rooms[0].Id == 0 {
 		log.Println("解析配置文件出错，请检查配置文件是否设置正确的直播间ID")
 		fmt.Scanln()
 		os.Exit(0)
